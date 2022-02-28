@@ -1,0 +1,141 @@
+from picar.utils import reset_mcu
+from picar import picarx
+import time
+
+reset_mcu()
+WALL_E = picarx.Picarx()
+
+'''
+Program to find and follow the boundary of the maze
+by following the left side of the Maze until it finds
+the end of the Maze
+'''
+
+
+
+
+def calibrate():
+    #Change this value for a hard left turn
+    hardLeft = -27
+    #Change this value for a soft left turn
+    softLeft = -5
+    #Change this value for a hard right
+    hardRight = 50
+    #Change this value for a soft right
+    softRight = 25
+    #Change this value for a straight path
+    straight = 14
+
+    WALL_E.turn_wheels(straight)
+    time.sleep(3)
+    WALL_E.turn_wheels(hardLeft)
+    time.sleep(1)
+    WALL_E.turn_wheels(softLeft)
+    time.sleep(1)
+    WALL_E.turn_wheels(straight)
+    time.sleep(1)
+    WALL_E.turn_wheels(softRight)
+    time.sleep(1)
+    WALL_E.turn_wheels(hardRight)
+    time.sleep(1)
+    WALL_E.turn_wheels(straight)
+
+def sense_line(cut_off=700):
+    '''
+    Read the line sensor values and use the cut_off value to return a list
+    where each element is either 0 for black or 1 for white.
+    '''
+
+    #Initialize The list
+    lineList = []
+    readvalues = WALL_E.get_line_sensor_values()
+    
+    for value in readvalues:
+        if value <= cut_off:
+            #sees black
+            lineList.append(1) 
+        elif value >= cut_off:
+            #sees not black
+            lineList.append(0)
+    #print(lineboi)
+    return lineList
+
+#Variable Init. Section
+turnAngle = -5 #LEFT
+turnStraight = 15 #STRAIGHT
+turnSpeed = 5
+forwardSpeed = 5
+
+def getLineControlsLeft():
+    '''
+    Read line sensor and return a two tuple with the first element the speed
+    and the second element the turn angle ie (speed, angle).
+    '''
+    readValues = sense_line()
+    
+    #Change this value for a hard left turn
+    hardLeft = -27
+    #Change this value for a soft left turn
+    softLeft = -5
+    #Change this value for a hard right
+    hardRight = 50
+    #Change this value for a soft right
+    softRight = 25
+    #Change this value for a straight path
+    straight = 14
+    #Default Speed
+    DEFAULT_SPEED = 10
+    
+    # straight
+    if readValues == [1,0,0]:
+        return (DEFAULT_SPEED, straight)
+    # soft right
+    elif readValues == [1,1,0]:
+        return (DEFAULT_SPEED // 2, softRight)
+    # hard right
+    elif readValues == [1,1,1]:
+        return (DEFAULT_SPEED // 4, hardRight)
+    # soft left
+    elif readValues == [0,1,1] or [0,0,1]:
+        return (DEFAULT_SPEED // 2, softRight)
+    # soft left
+    elif readValues == [0,0,0]:
+        return (DEFAULT_SPEED // 2, softLeft) 
+    # else
+    else:
+        print("Wall-E is having trouble finding the line!")
+        return None
+
+def findLineLeft(forwardSpeed = 5):
+    '''
+    This while loop serves to make the robot find the
+    boundary line and then back up, then go parallel
+    to it.
+    '''
+    
+    #Change this value for a soft right
+    softRight = 25
+    #Change this value for a straight path
+    straight = 14
+    
+    forwardSpeed = forwardSpeed
+    
+    
+    WALL_E.forward(forwardSpeed)
+    WALL_E.turn_wheels(turnAngle)
+    run = True
+    while run == True:
+        # If WALL_E finds the boundary
+        getLineControlsLeft()
+        print(getLineControlsLeft())
+        if getLineControlsLeft()[1] != softRight or getLineControlsLeft()[1] == straight:
+            WALL_E.stop()
+            run = False
+        else:
+            WALL_E.forward(forwardSpeed)
+            
+    
+def followLineLeft():
+    findLineLeft()
+
+followLineLeft()
