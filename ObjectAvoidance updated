@@ -1,0 +1,101 @@
+from picar import picarx
+from picar.utils import reset_mcu
+import time
+import random
+reset_mcu()
+force_turning = 2    # turning direction for avoidance (0 = random direction, 1 = force left, 2 = force right, 3 = orderdly)
+umicar=picarx.Picarx()
+fw=umicar.forward #unnecesary, but makes code shorter ex. fw(speed_value) is the same as umicar.forward(speed_value)
+bw=umicar.backward 
+fwturn=umicar.turn_wheels 
+
+fwturning_max = 23 #max turning angle
+forward_speed = 25
+backward_speed = 25
+turntime=.75 #length of time for each turn
+
+back_distance = 17 #distance at which picar will back up
+turn_distance = 35 #distance at which picar will turn
+
+
+timeout = 10
+last_angle = 23
+last_dir = 0
+def rand_dir():    #determines direction for turning when called
+    global last_angle, last_dir
+    if force_turning == 0:
+        _dir = random.randint(0, 1)
+    elif force_turning == 3:
+        _dir = not last_dir
+        last_dir = _dir
+        print('last dir  %s' % last_dir)
+    else:
+        _dir = force_turning - 1
+        angle = (- fwturning_max) + (_dir * 2* 
+        fwturning_max)
+    last_angle = angle
+    return angle
+
+
+
+def opposite_angle(): #Returns the inverse of the last turning angle used
+    global last_angle
+    angle= -last_angle
+    last_angle = angle
+    return angle
+
+def getdistance():  #returns distance from object sensor
+    a = umicar.get_distance()
+    b = umicar.get_distance()
+    c = umicar.get_distance()
+    d = umicar.get_distance()
+    e = umicar.get_distance()
+    f = umicar.get_distance()
+    if (a<0 or b<0 or c<0 or d<0 or e<0 or f<0):
+        getdistance()
+    d = (a + b + c + d + e +f)/6
+    return d
+
+def start_avoidance(): #main method 
+    print('start_avoidance')
+    count = 0
+    while True:
+        distance = getdistance()
+        print("distance: %scm" % distance)
+        if distance > 0:
+            count = 0  
+            if distance < back_distance: #if object is too close, reverse with wheels turned inverse, then move forward and turn
+                print("backward")
+                fwturn(opposite_angle())
+                bw(backward_speed)
+                time.sleep(turntime)
+                fwturn(opposite_angle())
+                fw(forward_speed)
+                time.sleep(turntime)
+            elif distance < turn_distance: #If object is within turning distance, call rand dir function for turning direction, then turn around object 
+                print("turn")
+                fwturn(rand_dir())
+                fw(forward_speed)
+                time.sleep(turntime)
+            else: #continue straight when conditions not met
+                fwturn(0)
+                fw(forward_speed)
+                #When no object detected, call line following
+
+
+
+def stop():
+    umicar.stop()
+    fwturn(0)
+
+
+
+if __name__ == '__main__':
+    try:
+        start_avoidance()
+    except KeyboardInterrupt:
+        stop()
+
+
+
+
