@@ -96,7 +96,3 @@ def start_avoidance(): #main method
 def stop():
     umicar.stop()
     fwturn(0)
-
-
-
-if __name__ == '__main__':
