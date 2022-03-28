@@ -57,6 +57,7 @@ def getdistance():  #returns distance from object sensor
 def start_avoidance(): #main method 
     print('start_avoidance')
     count = 0
+    # Turn clock is the amount of times that the loop will run before stopping (it is 15 right now)
     turnclock=turnTime/shortTime
     interval=0
     while True:
@@ -70,21 +71,20 @@ def start_avoidance(): #main method
                 bw(backward_speed)
                 time.sleep(turntime)
                 fwturn(opposite_angle())              
-                while(nolinedetected and interval<turnclock):       #NEW down
+                while ( nolinedetected and (interval < turnclock) ):       #NEW down
                   fw(forward_speed)
                   time.sleep(shortTime)
                   interval+=1
                 if (linedetected):
                   getLineControlsLeft().                            #NEW up
-            elif distance < turn_distance: #object is within turning distance
-              
+            elif (distance < turn_distance): #object is within turning distance
                 print("turn")
                 fwturn(rand_dir())
-                while(nolinedetected and interval<turnclock):       #NEW down
+                while(isLineDetected() and interval<turnclock):       #NEW down
                   fw(forward_speed)
                   time.sleep(shortTime)
                   interval+=1
-                if (linedetected):
+                if (isLineDetected()):
                   getLineControlsLeft()     #NEW up
             else: #continue straight when conditions not met. [CALL FIND LINE]
                 fwturn(0)
