@@ -30,7 +30,7 @@ def getDistance():
         getDistance()
 
 
-def isObjectDetected():
+def isObjectDetected(distanceThreshold = 35):
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     THIS IS THE PARENT FUNCTION OF 'getDistance'
@@ -41,8 +41,9 @@ def isObjectDetected():
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     '''
 
-    # The distance, in centimeters, at which the detector will return true if there is an object
-    distanceThreshold = 35
+    # FROM PERAMETERS: The distance, in centimeters, at which the detector will return true if there is an object
+    
+    
     # The variable that holds whether or not an object has been detected
     objectBool = False
     # The variable that holds the average distance of the object detected
