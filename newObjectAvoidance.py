@@ -128,3 +128,22 @@ def isLineDetected():
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
     return lineDetectedValue
+
+
+def avoidObject():
+    # This variable holds the value of the line sensors
+    lineDir = isLineDetected()
+    
+    if ( lineDir = 0 ):
+        # INSERT code for continuing straight
+        # As in, insert code for when there is no line detected 
+    elif ( lineDir = 1 ):
+        # INSERT code for when the left line is detected
+    elif ( lineDir = 2 ):
+        # INSERT code for when the right line is detected
+    elif ( lineDir = 3 ):
+        # INSERT code for when the line is hit in the middle
+        # As in, insert code for when the robot hits the line dead on
+    else:
+        # INSSERT code for when there was an exception, this shouldn't
+        # really happen at all but you never know tbh
