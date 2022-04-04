@@ -148,17 +148,17 @@ def avoidObject():
     
     run = true
     while run:
-        if ( lineDir == 0 ):
+        if ( lineDir = 0 ):
             WALL_E.forward(speed)
         elif ( lineDir = 1 ): # INSERT code for when the left line is detected
             print("The left line was found, we do not have code for this yet.")
-        elif ( lineDir == 2 ): # If the right line is found
+        elif ( lineDir = 2 ): # If the right line is found
             WALL_E.stop()
             WALL_E.turn_wheels(right)
             WALL_E.backward(speed)
             time.sleep(1)
             followLineLeft()
-        elif ( lineDir == 3 ): # INSERT code for when the line is hit in the middle
+        elif ( lineDir = 3 ): # INSERT code for when the line is hit in the middle
             print("The middle of the line was found, we do not have code for this yet.")
         else:
             # INSSERT code for when there was an exception, this shouldn't
