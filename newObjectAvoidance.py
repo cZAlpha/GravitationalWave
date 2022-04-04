@@ -132,17 +132,35 @@ def isLineDetected():
 def avoidObject():
     # This variable holds the value of the line sensors
     lineDir = isLineDetected()
+    WALL_E.stop()
     
-    if ( lineDir = 0 ):
-        # INSERT code for continuing straight
-        # As in, insert code for when there is no line detected 
-    elif ( lineDir = 1 ):
-        # INSERT code for when the left line is detected
-    elif ( lineDir = 2 ):
-        # INSERT code for when the right line is detected
-    elif ( lineDir = 3 ):
-        # INSERT code for when the line is hit in the middle
-        # As in, insert code for when the robot hits the line dead on
-    else:
-        # INSSERT code for when there was an exception, this shouldn't
-        # really happen at all but you never know tbh
+    speed = 10
+    right = 22
+    straight = 0
+    left = -22
+    
+    # This section is to turn the car to the right
+    # DONT HARDCODE THIS, CHANGE THIS
+    WALL_E.turn_wheels(right)
+    WALL_E.forward(speed)
+    time.sleep(1)
+    WALL_E.turn_wheels(straight)
+    
+    run = true
+    while run:
+        if ( lineDir = 0 ):
+            WALL_E.forward(speed)
+        elif ( lineDir = 1 ): # INSERT code for when the left line is detected
+            print("The left line was found, we do not have code for this yet.")
+        elif ( lineDir = 2 ): # If the right line is found
+            WALL_E.stop()
+            WALL_E.turn_wheels(right)
+            WALL_E.backward(speed)
+            time.sleep(1)
+            followLineLeft()
+        elif ( lineDir = 3 ): # INSERT code for when the line is hit in the middle
+            print("The middle of the line was found, we do not have code for this yet.")
+        else:
+            # INSSERT code for when there was an exception, this shouldn't
+            # really happen at all but you never know tbh
+            print("An error has occured inside the function avoidObject()")
