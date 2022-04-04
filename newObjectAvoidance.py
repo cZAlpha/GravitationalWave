@@ -93,8 +93,7 @@ def isLineDetected():
         elif value >= cut_off:
             # sees not black
             lineList.append(0)
-    
-    lineList = [0,1,1]
+
     
     print("Line List:", lineList)
     print("Read Values:", readValues)
