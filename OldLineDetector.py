@@ -3,7 +3,7 @@ from picar import picarx
 import time
 
 #IMPORT SECTION FOR DIFFERENT MODULES
-import objectAvoidance
+import newObjectAvoidance
 
 
 
@@ -207,6 +207,9 @@ def followLineLeft():
         print("~~~~~~~~~~~~~~~~~~~~~~")
         
         
+        print("Direction:", directions)
+        print("Speed:", speed)
+        
             
         # Checks for errors in the getLineControlsLeft() function
         if (directions == 'None' and speed == 'None'):
@@ -214,9 +217,10 @@ def followLineLeft():
             WALL_E.stop()
             run = False
         # Checks for objects in front of WALL_E
-        
-        elif (directions != 'None' and speed != 'None'):
-            isObjectDetected()
+    
+        elif (newObjectAvoidance.isObjectDetected()):
+            print("object detected")
+            newObjectAvoidance.avoidObject()
             # INSERT FUNCTION THAT GOES AROUND OBJECT AND / OR CHECKS WHAT TYPE OF OBJECT IT IS
     
         # Controls the robot if other cases are false
@@ -234,14 +238,14 @@ def followLineLeft():
                 print("~~~~~~~~~~~~~~~~~~~~~~")
                 time.sleep(1)
             else:
+                print("directions", hardRight, softRight)
                 # Sets speed
                 WALL_E.forward(speed)
                 # Sets direction
                 WALL_E.turn_wheels(directions)
             
     
-def abc():
-    objectAvoidance.start_avoidance()
+
     
     
     
