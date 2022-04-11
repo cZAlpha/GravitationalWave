@@ -1,0 +1,103 @@
+# IMPORT SECTION
+# <INSERT IMPORTS>
+import time
+
+
+# GENERAL VARIABLE INIT. SECTION
+speed = ___
+direction = ___
+straight = ___
+MAX_DIRECTION = 30
+MOVABLE_OBJECT_COLOR = "green"
+SAMPLE_COLOR = "red"
+
+# Explanation of states:
+# "line" - when the robot is following the line
+# "object" - when the robot has detected or is avoiding the object
+# "avoidingObject" - when the robot is avoiding the object
+
+# Initialises state
+state = "line"
+substate = ""
+
+
+
+# START OF ACTUAL CODE
+
+# Finds the line initially
+findLineLeft()
+
+run = true
+while( run ):
+    # State swap section
+
+    # This checks for if there is an object in front of WALL_E
+    if ( objectDetected() ):
+        state = "object"
+    else:
+        state = "line"
+
+
+    # DO SHIT SECTION
+
+    # Object avoidance section
+    if ( state == "object"):
+
+        direction = 15
+        WALL_E.stop()
+
+        # FACTOR ALL OF THE OBJECT AVOIDANCE STUFF INTO A FUNCTION
+
+        # Finds out if the object's color is not a immovable object
+        isColor = isColorDetected()
+        if (isColor):
+            # Finds the color of the object in front of the PiCar
+            color = colorDetection()
+
+        # Immovable
+        elif ( objectDetected() and isColor == False):
+            if(direction < MAX_DIRECTION):
+                direction += 1
+            else:
+                direction = MAX_DIRECTION
+            WALL_E.turn_wheels(direction)
+            WALL_E.forward(speed)
+            substate = "avoidingObject"
+
+        # Avoiding the Object
+        elif ( objectDetected() == False and substate == "avoidingObject"):
+            WALL_E.turn_wheels(straight)
+
+        # Avoiding the object but hit the right wall
+        elif ( substate == "avoidingObject" and isLineDetected() == True ):
+            state = "line"
+
+        # Movable
+        elif ( color == MOVABLE_OBJECT_COLOR ):
+            # < INSERT FUNCTION TO SPEAK AN NOTIFY THE PERSON THAT THE OBJECT HAS BEEN
+            #   FOUND AND DETECTED AS A MOVABLE OBJECT >
+            time.sleep(10)
+            state = "line"
+
+        # Sample
+        elif ( color == SAMPLE_COLOR ):
+            # < INSERT FUNCTION TO TAKE A PICTURE AND SEND TO COMMAND >
+            time.sleep(5)
+            state = "line"
+
+
+    # Following the line section
+    elif ( state == "line"):
+        # If you're in "line" but aren't on it
+        if ( isLineDetected() == False ):
+            findLineLeft()
+        # If you're in "line" and on it!
+        # Basically, steers the robot to stay on the line
+        elif ( isLineDetected() ):
+            followLineLeft()
+
+
+
+
+    # Allows time for the robot to think
+    time.sleep(1)
