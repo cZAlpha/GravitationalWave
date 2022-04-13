@@ -1,0 +1,8 @@
+    # Notifies the console that the boundary has been found
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("WALL-E has found the boundary.")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    time.sleep(1)
+    
+    WALL_E.stop()
+    WALL_E.turn_wheels(23)   
