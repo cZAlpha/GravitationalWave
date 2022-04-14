@@ -1,0 +1,88 @@
+import time
+
+
+# GLOBAL STATE VARIABLES
+objectState = "NO_OBJECT"
+
+def Main():
+    # 'run' variable determines whether or not the main loop is executed
+    run = True
+    # THIS IS THE MAIN LOOP
+    while ( run ) :
+        # getLineControls() MUST return a triple tuple with (directions, speed)
+        instructions = getLineControls()
+        # isObject() MUST return a boolean as to whether or not there is an object in front of the robot
+        isObject = isObject()
+        
+        
+        
+        # STATE SWAP SECTION
+        if ( isObject ):
+            objectState = "OBJECT"
+        elif ( not isObject ):
+            objectState = "NO_OBJECT"
+        
+        
+        
+        # DO SHIT SECTION
+        if ( objectState == "NO_OBJECT"):
+            # Turns WALL_E's wheels to the direction appropriate given line sensor information
+            WALL_E.turn_wheels( instructions[0] )
+            # Changes WALL_E's speed to the amount appropriate given line sensor information
+            WALL_E.forward( instructions[1] )
+        elif ( objectState == "OBJECT" ):
+            # This function is meant to determine what kind of object is in front of the robot and return
+            # a tuple similar to the one that 'instructions' does.
+            objectAvoidance()
+        
+
+def objectAvoidance():
+    WALL_E.stop()
+    
+    # CHANGE VALUES BASED ON ZERO OF PICAR DIRECTION
+    left = -20
+    right = 30
+    straight = 14
+    
+    
+    # CHANGE COLOR VALUES BASED ON SCENARIO
+    immovableObjectColor = "blue"
+    movableObjectColor = "green"
+    sampleColor = "red"
+        
+    # INSERT COLOR DETECTION FUNCTION
+    color = ___
+
+
+    # IF AN IMMOVABLE OBJECT IS FOUND
+    if ( color == immovableObjectColor ):
+        # The following code gets the PiCar turned to the right so that it cannot see the object anymore
+        WALL_E.turn_wheels(right)
+        WALL_E.forward(5)
+        time.sleep(1)
+
+        objectState = "NO_OBJECT"
+
+    # IF A MOVABLE OBJECT IS FOUND
+    elif ( color == movableObjectColor):
+        WALL_E.turn_wheels(left)
+        time.sleep(1)
+        WALL_E.turn_wheels(right)
+        time.sleep(1)
+        WALL_E.turn_wheels(straight)
+        time.sleep(5)
+        
+        objectState = "NO_OBJECT"
+        
+    elif ( color == sampleColor):
+        WALL_E.turn_wheels(left)
+        time.sleep(1)
+        WALL_E.turn_wheels(right)
+        time.sleep(1)
+        WALL_E.turn_wheels(straight)
+        time.sleep(5)
+        
+        print("SAMPLE LOCATED")
+        # INSERT FUNCTION TO TAKE SAMPLE
+
+        objectState = "NO_OBJECT"
