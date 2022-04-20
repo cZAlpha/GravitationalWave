@@ -1,0 +1,86 @@
+def lineControls():
+    '''
+    Read line sensor and return a two tuple with the first element the speed
+    and the second element the turn angle ie (speed, angle).
+    '''
+    readvalues = sense_line()
+
+    # soft left
+    if readvalues == [1, 0, 0]:
+        return (DEFAULT_SPEED // 2, softleft)
+    # straight
+    elif readvalues == [1, 1, 0]:
+        return (DEFAULT_SPEED, straight)
+    # soft right
+    elif readvalues == [1, 1, 1]:
+        return (DEFAULT_SPEED, softright)
+    # hard right
+    elif readvalues == [0, 0, 1]:
+        return (DEFAULT_SPEED // 2, hardright)
+    # soft right
+    elif readvalues == [0, 1, 1]:
+        return (DEFAULT_SPEED, softright)
+    # no line detected = soft left
+    elif readvalues == [0, 0, 0]:
+        return (DEFAULT_SPEED, softleft)
+
+    # random stuff = go straight at default speed
+    elif readvalues == [0, 1, 0] or readvalues == [1, 0, 1]:
+        return (DEFAULT_SPEED, straight)
+
+
+def isObject():
+    thresholdValue = 35
+    count = 0
+    sensorSum = 0
+    upperBound = 80
+    returnValue = False
+    
+    isDone = False
+    while ( not isDone  ):
+        sensorValue = ???
+        if ( sensorValue > 0 and  sensorValue < upperBound):
+            sensorSum += sensorValue
+            count += 1
+        isDone = count > 6
+    
+    # Finds the average
+    sensorAverage = sensorSum / count
+    
+    if ( sensorAverage < thresholdValue ):
+        returnValue = True
+    else:     
+        returnValue = False
+    return returnValue
+
+
+def objectControls():
+    # Globalizes the state variable
+    global inObjectState
+    
+    # Variables
+    turnAngle = 15
+    straightAngle = 0
+    turnSpeed = 10
+    
+    # State initialization
+    objectDetected = FUNCTION THAT RETURNS A BOOLEAN AS TO IF THERE IS AN OBJECT OR NOT
+    
+    # State swap section
+    if ( inObjectState == False ):
+        if ( objectDetected == False):
+            return (None, None)
+        
+        elif ( objectDetected == True):
+            inObjectState = True
+            return ( turnSpeed, turnAngle )
+        
+    elif ( inObjectState == True):
+        if ( objectDetected == True):
+            return (turnSpeed, turnAngle)
+        
+        elif ( objectDetected == False ):
+            WALL_E.turn_wheels(straight)
+            time.sleep(1)
+            inObjectState = False
+            return (None, None)
