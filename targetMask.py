@@ -14,45 +14,52 @@ inObjectState = False
 currentLineState = "NO_LINE"
 
 # VARIABLE SECTION
+#change this for straight path
+straight=0
 # Change this value for a hard left turn
-hardleft = -27
+hardleft = straight-20
 # Change this value for a soft left turn
-softleft = -5
+softleft = straight-15
 # Change this value for a hard right
-hardright = 50
+hardright = straight+20
 # Change this value for a soft right
-softright = 25
-# Change this value for a straight path
-straight = 14
+softright = straight+15
 # Change this value for the default speed
-DEFAULT_SPEED = 10
+DEFAULT_SPEED = 3
 
 
 def Main():
-    functionList = [objectControls(), lineControls()]
-
+    print("Main Initiated...")
+    print("")
+    
     run = True
     while ( run ):
-        for i in range(0, 2):
-            # Sets the controls
-            controls = functionList[i]
-
-            # If there is no object, the PiCar uses Line Controls to drive
-            if ( (controls == (None, None)) and ( i == 0 )):
-                controls = functionList[1]
-            # If there is an object, the PiCar avoids it
-            elif ( i == 0 ):
-                controls = functionList[0]
-            # Catches weird cases / errors
-            else:
-                WALL_E.stop()
-                print("AN ERROR HAS OCCURRED IN MAIN FOR LOOP")
-                time.sleep(5)
-
+        print("Before Object Controls")
+        print("")
+        objControls=objectControls()
+        print("Before Line Controls")
+        print("")
+        lnControls=lineControls()
+        print("**********************")
+        
+        # If there is no object, the PiCar uses Line Controls to drive
+        if (objControls == (None, None) ):
             # Controlling robot portion
-            WALL_E.forward( controls[0] )
-            WALL_E.turn_wheels( controls[1] )
-
+            WALL_E.forward(lnControls[0] )
+            WALL_E.turn_wheels(lnControls[1] )
+            print("In Line Controls")
+            
+        # If there is an object, the PiCar avoids it
+        elif(not objControls==(None,None)):
+            WALL_E.forward(objControls[0] )
+            WALL_E.turn_wheels(objControls[1] )
+            print("In Object Controls")
+            
+        # An error case, Line function should never return (None, None)
+        elif ( lnControls == (None, None) ):
+            print("Controls equaled None while not in Object function for some reason. Fix it.")
+            run = False
+            
 
 
 def sense_line(cut_off=700):
@@ -84,29 +91,39 @@ def lineControls():
 
     # soft left
     if readvalues == [1, 0, 0]:
+        print("Soft Left")
         return (DEFAULT_SPEED // 2, softleft)
     # straight
     elif readvalues == [1, 1, 0]:
+        print("Straight")
         return (DEFAULT_SPEED, straight)
     # soft right
     elif readvalues == [1, 1, 1]:
+        print("Soft Right")
         return (DEFAULT_SPEED, softright)
     # hard right
     elif readvalues == [0, 0, 1]:
+        print("Hard Right")
         return (DEFAULT_SPEED // 2, hardright)
     # soft right
     elif readvalues == [0, 1, 1]:
-        return (DEFAULT_SPEED, softright)
+        print("Soft Right")
+        return (DEFAULT_SPEED, hardright)
     # no line detected = soft left
     elif readvalues == [0, 0, 0]:
+        print("Soft Left")
         return (DEFAULT_SPEED, softleft)
 
     # random stuff = go straight at default speed
     elif readvalues == [0, 1, 0] or readvalues == [1, 0, 1]:
+        print("Random Stuff")
         return (DEFAULT_SPEED, straight)
 
 
 def isObject():
+    print("*************")
+    print("In isObject()")
+    print("*************")
     thresholdValue = 35
     count = 0
     sensorSum = 0
@@ -115,9 +132,9 @@ def isObject():
 
     isDone = False
     while ( not isDone ):
-        # WHATEVER COMMAND IT IS TO TAKE THE LINE SENSOR VALUES
-        sensorValue = WALL_E.???
-        if ( sensorValue > 0 and  sensorValue < upperBound):
+        # WHATEVER COMMAND IT IS TO TAKE THE OBJECT SENSOR VALUES
+        sensorValue = WALL_E.get_distance()
+        if ( (sensorValue > 0 and sensorValue < upperBound) or sensorValue == -2):
             sensorSum += sensorValue
             count += 1
         isDone = count > 6
@@ -133,13 +150,17 @@ def isObject():
 
 
 def objectControls():
+    print("*****************")
+    print("In objectControls")
+    print("*****************")
+    
     # Globalizes the state variable
     global inObjectState
 
     # Variables
-    turnAngle = 15
-    straightAngle = 14
-    turnSpeed = 10
+    turnAngle = straight + 6
+    straightAngle = straight
+    turnSpeed = 3
 
     # Object detection
     objectDetected = isObject()
@@ -148,21 +169,29 @@ def objectControls():
     if ( inObjectState == False ):
         # This case handles when the robot doesn't spot an object
         if ( objectDetected == False):
+            print("inObjectState == False")
+            print("objectDetected == False")
             return (None, None)
 
         # This case handles when the robot spots an object
         elif ( objectDetected == True):
+            print("inObjectState == False")
+            print("objectDetected == True")
             inObjectState = True
             return ( turnSpeed, turnAngle )
 
     elif ( inObjectState == True):
         # This case handles when the robot spots an object
         if ( objectDetected == True):
+            print("inObjectState == True")
+            print("objectDetected == True")
             return ( turnSpeed, turnAngle )
 
         # This case handles when the robot was already avoiding the object but needs to straighten out
         elif ( objectDetected == False ):
+            print("inObjectState == True")
+            print("objectDetected == False")
             WALL_E.turn_wheels(straightAngle)
-            time.sleep(1)
+            #time.sleep(1)
             inObjectState = False
             return (None, None)
