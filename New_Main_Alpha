@@ -27,7 +27,12 @@ hardright = straight+20
 softright = straight+12
 # Change this value for the default speed
 DEFAULT_SPEED = 2
-
+# Change this variable's value for IMMOVABLE OBJECT COLOR
+immovableColor = 'Blue'
+# Change this variable's value for MOVABLE OBJECT COLOR
+movableColor = 'Green'
+# Change this variable's value for the SAMPLE COLOR
+sampleColor = 'Red'
 
 def Main():
     print("Main Initiated...")
@@ -182,19 +187,31 @@ def objectControls():
 
         # This case handles when the robot spots an object
         elif ( objectDetected == True):
-            print("inObjectState == False")
-            print("objectDetected == True")
-            inObjectState = True
             WALL_E.stop()
+            # This variable holds the color of the object detected in front of the PiCar
+            color = color_code_1.checkColor()
+            print("Object Spotted! Color of Object is", color)
             time.sleep(2)
-            WALL_E.turn_wheels(straight)
-            WALL_E.backward(turnSpeed)
-            time.sleep(0.5)
-            WALL_E.stop()
-            time.sleep(0.5)
-            WALL_E.turn_wheels(12)
-            WALL_E.forward(turnSpeed)
-            time.sleep(1)
+            if (color == immovableColor):
+                print("inObjectState == False")
+                print("objectDetected == True")
+                inObjectState = True
+                WALL_E.stop()
+                time.sleep(2)
+                WALL_E.turn_wheels(straight)
+                WALL_E.backward(turnSpeed)
+                time.sleep(0.5)
+                WALL_E.stop()
+                time.sleep(0.5)
+                WALL_E.turn_wheels(12)
+                WALL_E.forward(turnSpeed)
+                time.sleep(1)
+             elif ( color == movableColor ):
+                print("Movable Object Spotted")
+             elif ( color == sampleColor ):
+                print("Sample Object Spotted")
+             else:
+                print("The Color of The Object Is NOT One of The Variables Instantiated at the Beginning of The File!")
             
             return ( turnSpeed, turnAngle )
 
@@ -210,6 +227,5 @@ def objectControls():
             print("inObjectState == True")
             print("objectDetected == False")
             WALL_E.turn_wheels(straightAngle)
-            #time.sleep(1)
             inObjectState = False
             return (None, None)
